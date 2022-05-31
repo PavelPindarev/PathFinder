@@ -1,0 +1,23 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/commons::head"></head>
+
+<body>
+<div class="wrapper">
+    <!-- Navigation -->
+    <header th:replace="fragments/commons::navbar"></header>
+
+    <section class="road" th:each="r : ${routes}">
+        <img src="/images/pic1.jpg" alt="Title image">
+        <div>
+            <h2 th:text="*{r.name}">Your Route</h2>
+            <p th:text="*{r.description}">Description</p>
+            <a href="/" class="btn">Learn More</a>
+        </div>
+    </section>
+</div>
+<!-- Wrapper Ends -->
+</body>
+<footer th:replace="fragments/commons::footer"></footer>
+</html>
