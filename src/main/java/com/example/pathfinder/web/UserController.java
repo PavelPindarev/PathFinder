@@ -79,15 +79,18 @@ public class UserController {
     }
 
     //    LOGIN
-    @ModelAttribute()
+    @ModelAttribute(name = "userModel")
     public UserLoginBindingModel userLoginBindingModel() {
         return new UserLoginBindingModel();
     }
 
+    @ModelAttribute(name = "isExist")
+    public boolean isUserExist() {
+        return true;
+    }
+
     @GetMapping("/login")
     public String getLoginView(Model model) {
-        model.addAttribute("isExists", true);
-
         return "login";
     }
 
@@ -95,6 +98,8 @@ public class UserController {
     public String login(@Valid UserLoginBindingModel bindingModel,
                         BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
+ /*
+       That is not needed right now because we don't have validations in binding model
         if (bindingResult.hasErrors()) {
             redirectAttributes
                     .addFlashAttribute("userLoginBindingModel", bindingModel)
@@ -103,12 +108,13 @@ public class UserController {
             return "redirect:login";
         }
 
+  */
         UserServiceModel userServiceModel = userService
                 .getUsersByUsernameAndPassword(bindingModel.getUsername(), bindingModel.getPassword());
 
         if (userServiceModel == null) {
             redirectAttributes
-                    .addFlashAttribute("isExists", false)
+                    .addFlashAttribute("isExist", false)
                     .addFlashAttribute("userLoginBindingModel", bindingModel)
                     .addFlashAttribute("org.springframework.validation.BindingResult", bindingResult);
 

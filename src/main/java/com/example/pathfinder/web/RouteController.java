@@ -33,6 +33,7 @@ public class RouteController {
                 .map(r -> mapper.map(r, RouteView.class))
                 .collect(Collectors.toList());
         model.addAttribute("routes",  routeViews);
+
         return "routes";
     }
 }
