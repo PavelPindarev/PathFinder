@@ -8,12 +8,12 @@
     <!-- Navigation -->
     <header th:replace="fragments/commons::navbar"></header>
 
-    <section class="road" th:each="r : ${routes}">
-        <img th:src="/images/pic1.jpg" alt="Title image">
+    <section class="road" th:each="r : ${routes}" th:object="${r}">
+        <img th:src="*{picture.url}" alt="Title image">
         <div>
-            <h2 th:text="*{r.name}">Your Route</h2>
-            <p th:text="*{r.description}">Description</p>
-            <a href="/" class="btn">Learn More</a>
+            <h2 th:text="*{name}">Your Route</h2>
+            <p th:text="*{description}">Description</p>
+            <a th:href="@{/routes/details/{id}(id = *{id})}" class="btn">Learn More</a>
         </div>
     </section>
 </div>
