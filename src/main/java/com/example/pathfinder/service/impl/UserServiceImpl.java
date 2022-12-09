@@ -1,72 +1,84 @@
 package com.example.pathfinder.service.impl;
 
-import com.example.pathfinder.model.dto.service.UserServiceModel;
+import com.example.pathfinder.model.dto.binding.UserRegisterBindingModel;
+import com.example.pathfinder.model.dto.view.UserProfileView;
+import com.example.pathfinder.model.entity.Role;
 import com.example.pathfinder.model.entity.User;
 import com.example.pathfinder.model.entity.enums.LevelType;
+import com.example.pathfinder.model.entity.enums.RoleType;
+import com.example.pathfinder.repository.RoleRepository;
 import com.example.pathfinder.repository.UserRepository;
 import com.example.pathfinder.service.UserService;
-import com.example.pathfinder.util.CurrentUser;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.util.Set;
+
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final ModelMapper mapper;
-    private final CurrentUser currentUser;
+    private final PasswordEncoder passwordEncoder;
+    private final UserDetailsService userDetailsService;
 
 
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, ModelMapper mapper, CurrentUser currentUser) {
+    public UserServiceImpl(UserRepository userRepository,
+                           ModelMapper mapper,
+                           RoleRepository roleRepository,
+                           PasswordEncoder passwordEncoder,
+                           UserDetailsService userDetailsService) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.mapper = mapper;
-        this.currentUser = currentUser;
+        this.passwordEncoder = passwordEncoder;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
-    public void register(UserServiceModel userServiceModel) {
-        User user = mapper.map(userServiceModel, User.class);
+    public void registerAndLogin(UserRegisterBindingModel registerModel) {
+        User user = mapper.map(registerModel, User.class);
+        Role role = roleRepository.findByName(RoleType.USER).orElseThrow();
+        user.setRoles(Set.of(role));
         user.setLevel(LevelType.BEGINNER);
 
+        user.setPassword(passwordEncoder.encode(registerModel.getPassword()));
+
         userRepository.save(user);
+
+        login(user.getUsername());
     }
 
-    @Override
-    public UserServiceModel getUsersByUsernameAndPassword(String username, String password) {
-        Optional<User> optUser =
-                userRepository.findByUsernameAndPassword(username, password);
+    private void login(String username) {
+        UserDetails userDetails =
+                userDetailsService.loadUserByUsername(username);
 
-        return optUser
-                .map(user -> mapper.map(user, UserServiceModel.class))
-                .orElse(null);
+        Authentication auth =
+                new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        userDetails.getPassword(),
+                        userDetails.getAuthorities()
+                );
 
+        SecurityContextHolder
+                .getContext()
+                .setAuthentication(auth);
     }
 
-    @Override
-    public void userLogin(UserServiceModel serviceModel) {
-        this.currentUser
-                .setId(serviceModel.getId())
-                .setUsername(serviceModel.getUsername())
-                .setLoggedIn(true);
-
-    }
 
     @Override
-    public void userLogout() {
-        this.currentUser
-                .setId(null)
-                .setUsername(null)
-                .setLoggedIn(false);
-    }
-
-    @Override
-    public UserServiceModel findById(Long id) {
+    public UserProfileView findById(Long id) {
         return userRepository.findById(id)
-                .map(user -> mapper.map(user, UserServiceModel.class))
+                .map(user -> mapper.map(user, UserProfileView.class))
                 .orElse(null);
     }
 

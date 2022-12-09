@@ -11,7 +11,6 @@ public class HomeController {
 
     private final PictureService pictureService;
 
-    @Autowired
     public HomeController(PictureService pictureService) {
         this.pictureService = pictureService;
     }

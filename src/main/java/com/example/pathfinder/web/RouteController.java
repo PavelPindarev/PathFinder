@@ -32,7 +32,13 @@ public class RouteController {
         List<RouteView> routeViews = routeService
                 .getAllRoutes()
                 .stream()
-                .map(r -> new RouteView(r.getId(), r.getName(), r.getDescription(), r.getPictures().stream().findFirst().get()))
+                .map(r ->
+                        new RouteView(r.getId(),
+                                r.getName(),
+                                r.getDescription(),
+                                r.getPictures()
+                                        .stream()
+                                        .findFirst().get()))
                 .collect(Collectors.toList());
         model.addAttribute("routes", routeViews);
 

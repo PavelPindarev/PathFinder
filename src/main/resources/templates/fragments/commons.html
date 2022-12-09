@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:fragment="head">
     <meta charset="UTF-8"/>
@@ -19,39 +20,56 @@
             crossorigin=""></script>
 </head>
 <body>
+
 <header th:fragment="navbar">
+
     <nav class="main-nav">
         <ul>
-            <th:block th:unless="${@currentUser.loggedIn}">
-                <li>
-                    <a href="/">Home</a>
-                </li>
+            <li>
+                <a href="/">Home</a>
+            </li>
+            <li>
+                <a href="/about">About</a>
+            </li>
+
+            <th:block sec:authorize="!isAuthenticated()">
                 <li>
                     <a href="/users/login">Login</a>
                 </li>
                 <li>
                     <a href="/users/register">Register</a>
                 </li>
+            </th:block>
+
+            <th:block sec:authorize="isAuthenticated()">
                 <li>
-                    <a href="/about">About</a>
+                    <a th:href="@{/users/profile/{id}(id = ${#authentication.principal.id})}">Profile</a>
+                </li>
+
+                <li>
+
+                    <div class="row form-inline my-2 my-lg-0 px-3">
+                        <div class="text-dark">Welcome,
+                            <th:block th:text="${#authentication.principal.fullName}">X</th:block>
+                            !
+                        </div>
+                        <form th:action="@{/users/logout}" th:method="post">
+                            <input type="submit" value="Logout">
+                        </form>
+                    </div>
+
                 </li>
             </th:block>
 
-            <th:block th:if="${@currentUser.loggedIn}">
-                <li>
-                    <a href="/routes/add">Add new route</a>
-                </li>
-                <li>
-                    <a th:href="@{/users/profile/{id}(id = ${@currentUser.id})}">Profile</a>
-                </li>
+            <th:block sec:authorize="hasRole('ADMIN')">
                 <li>
                     <a href="/">Admin</a>
                 </li>
+
                 <li>
-                    <a href="/users/logout">Logout</a>
+                    <a href="/routes/add">Add new route</a>
                 </li>
             </th:block>
-
         </ul>
     </nav>
 </header>

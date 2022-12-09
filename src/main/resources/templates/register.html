@@ -8,13 +8,16 @@
 <main class="p-5 align-content-center bg-blur my-register-div">
     <h1 class="border-bottom">Register</h1>
     <div class="d-flex justify-content-center ">
+
         <div class="row g-3">
+
             <form
                     th:action="@{/users/register}"
-                    th:method="post"
+                    th:method="POST"
                     th:object="${userModel}"
             >
                 <div class="row">
+
                     <div class="col-auto">
                         <label for="username" class="col-form-label ">Username</label>
                         <input th:field="*{username}"
@@ -26,10 +29,8 @@
                         </small>
                     </div>
 
-
                     <div class="col-auto">
                         <label for="inputFullName" class="col-form-label ">Full Name</label>
-
                         <input th:field="*{fullName}"
                                th:errorclass="is-invalid"
                                type="text"
@@ -48,8 +49,8 @@
                                type="email"
                                id="inputEmail"
                                class="form-control">
-                        <small class="invalid-feedback bg-danger errors alert text-center text-dark">Invalid
-                            email.</small>
+                        <small class="invalid-feedback bg-danger errors alert text-center text-dark">
+                            Invalid email.</small>
                     </div>
 
                     <div class="col-auto">
@@ -67,7 +68,6 @@
                 <div class="row">
                     <div class="col-auto">
                         <label for="inputPassword" class="col-form-label ">Password</label>
-
                         <input th:field="*{password}"
                                th:errorclass="is-invalid"
                                type="password"

@@ -1,17 +1,12 @@
 package com.example.pathfinder.service;
 
-import com.example.pathfinder.model.dto.service.UserServiceModel;
+import com.example.pathfinder.model.dto.binding.UserRegisterBindingModel;
+import com.example.pathfinder.model.dto.view.UserProfileView;
 
 public interface UserService {
-    void register(UserServiceModel userServiceModel);
+    void registerAndLogin(UserRegisterBindingModel registerModel);
 
-    UserServiceModel getUsersByUsernameAndPassword(String username, String password);
-
-    void userLogin(UserServiceModel userServiceModel);
-
-    void userLogout();
-
-    UserServiceModel findById(Long id);
+    UserProfileView findById(Long id);
 
     boolean isUsernameExist(String username);
 
