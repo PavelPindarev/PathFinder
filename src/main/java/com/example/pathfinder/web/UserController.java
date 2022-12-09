@@ -6,6 +6,7 @@ import com.example.pathfinder.model.dto.view.UserProfileView;
 import com.example.pathfinder.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -77,12 +78,29 @@ public class UserController {
 
     //    LOGIN
 
+    @ModelAttribute("bad_credentials")
+    public boolean badCredentials() {
+        return false;
+    }
+
     @GetMapping("/login")
     public String getLoginView(Model model) {
         if (!model.containsAttribute("userModel")) {
             model.addAttribute("userModel", new UserLoginBindingModel());
         }
         return "login";
+    }
+
+//    ON ERROR
+    @PostMapping("/login-error")
+    public String loginError(@ModelAttribute(UsernamePasswordAuthenticationFilter
+            .SPRING_SECURITY_FORM_USERNAME_KEY) String username,
+                             RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addFlashAttribute(UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY, username)
+                .addFlashAttribute("bad_credentials", true);
+
+        return "redirect:/users/login";
     }
 
     //    PROFILE

@@ -11,11 +11,10 @@
         <div class="row g-3 align-items-center">
 
             <form
-                    th:object="${userModel}"
                     th:action="@{/users/login}"
                     th:method="post">
 
-                <h5 th:unless="${isExist}" th:class="bg-danger">Incorrect username or password</h5>
+                <h5 th:if="${bad_credentials}" th:class="bg-danger">Incorrect username or password!</h5>
 
                 <div>
                     <div class="col-auto">
@@ -23,8 +22,7 @@
                     </div>
                     <div class="col-auto">
                         <input type="text"
-                               th:field="*{username}"
-                               required minlength="4" maxlength="20"
+                               name="username"
                                id="inputUsername"
                                class="form-control"
                                aria-describedby="usernameHelpInline">
@@ -37,9 +35,9 @@
                     </div>
                     <div class="col-auto">
                         <input type="password"
-                               th:field="*{password}"
-                               required minlength="4" maxlength="20"
-                               id="inputPassword" class="form-control"
+                               name="password"
+                               id="inputPassword"
+                               class="form-control"
                                aria-describedby="passwordHelpInline">
                     </div>
                 </div>
